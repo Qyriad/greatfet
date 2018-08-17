@@ -102,7 +102,7 @@ usb_request_status_t usb_vendor_request_glitchkit_simple_enable_trigger(
   // as we want to have half of the conditions allowed to be edge conditions,
   // which we'll set up ISRs for-- and half to be level conditions, which we'll
   // splork into the active_condtions array.
-  static volatile pin_condition_t conditions_to_parse[MAX_PIN_CONDITIONS * 2];
+  static pin_condition_t conditions_to_parse[MAX_PIN_CONDITIONS * 2];
 
   if (stage == USB_TRANSFER_STAGE_SETUP) {
 
