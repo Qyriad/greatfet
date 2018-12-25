@@ -10,5 +10,5 @@ set(CMAKE_TOOLCHAIN_FILE cmake/toolchain-arm-cortex-m.cmake)
 project (greatfet_firmware_all)
 
 add_subdirectory(blinky)
-add_subdirectory(greatfet_usb)
-add_subdirectory(flash_stub)
+#add_subdirectory(greatfet_usb)
+#add_subdirectory(flash_stub)
