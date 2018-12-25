@@ -6,13 +6,9 @@ cmake_minimum_required(VERSION 3.1.3)
 
 project(blinky C CXX ASM)
 
-set(PATH_GREATFET_COMMON ${CMAKE_CURRENT_SOURCE_DIR}/../common)
-set(PATH_LIBGREAT ${CMAKE_CURRENT_SOURCE_DIR}/../../libgreat)
-set(PATH_LIBOPENCM3 ${CMAKE_CURRENT_SOURCE_DIR}/../libopencm3)
-
 # -------M0 Stuff-------
 
-set(SOURCE_M0 ${PATH_GREATFET_COMMON}/m0_sleep.c)
+set(SOURCE_M0 ${PATH_GREATFET_FIRMWARE_COMMON}/m0_sleep.c)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../cmake/m0_bin.s.cmake m0_bin.s)
 
@@ -38,25 +34,25 @@ add_custom_target(blinky_m0.bin ALL DEPENDS blinky_m0.elf COMMAND ${CMAKE_OBJCOP
 # -------M4 Stuff-------
 
 set(SOURCE_COMMON_M4
-	${PATH_GREATFET_COMMON}/greatfet_core.c
-	${PATH_GREATFET_COMMON}/spiflash_target.c
-	${PATH_GREATFET_COMMON}/spiflash.c
-	${PATH_GREATFET_COMMON}/spi_ssp.c
-	${PATH_GREATFET_COMMON}/i2c_bus.c
-	${PATH_GREATFET_COMMON}/i2c_lpc.c
-	${PATH_GREATFET_COMMON}/gpio_lpc.c
-	${PATH_GREATFET_COMMON}/gpio_int.c
-	${PATH_GREATFET_COMMON}/sgpio.c
-	${PATH_GREATFET_COMMON}/debug.c
-	${PATH_GREATFET_COMMON}/printf.c
-	${PATH_GREATFET_COMMON}/time.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/greatfet_core.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/spiflash_target.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/spiflash.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/spi_ssp.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/i2c_bus.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/i2c_lpc.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/gpio_lpc.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/gpio_int.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/sgpio.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/debug.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/printf.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/time.c
 	)
 
 # SPI flash version
 add_executable(blinky.elf ${CMAKE_CURRENT_SOURCE_DIR}/blinky.c ${SOURCE_COMMON_M4} m0_bin.s)
 add_dependencies(blinky.elf blinky_m0.bin)
 
-target_include_directories(blinky.elf PRIVATE ${PATH_LIBOPENCM3}/include ${PATH_GREATFET_COMMON} ${PATH_LIBGREAT}/firmware/include)
+target_include_directories(blinky.elf PRIVATE ${PATH_LIBOPENCM3}/include ${PATH_GREATFET_FIRMWARE_COMMON} ${PATH_LIBGREAT}/firmware/include)
 
 target_compile_options(blinky.elf PRIVATE -std=gnu99 -Os -g3 -Wall -Wextra -fno-common -MD -fno-builtin-printf -Wno-missing-field-initializers)
 
@@ -79,7 +75,7 @@ add_custom_target(blinky.bin ALL DEPENDS blinky.elf COMMAND ${CMAKE_OBJCOPY} -Ob
 add_executable(blinky_dfu.elf ${CMAKE_CURRENT_SOURCE_DIR}/blinky.c ${SOURCE_COMMON_M4} m0_bin.s)
 add_dependencies(blinky_dfu.elf blinky_m0.bin)
 
-target_include_directories(blinky_dfu.elf PRIVATE ${PATH_LIBOPENCM3}/include ${PATH_GREATFET_COMMON} ${PATH_LIBGREAT}/firmware/include ${PATH_LIBGREAT}/firmware/platform/lpc43xx/linker)
+target_include_directories(blinky_dfu.elf PRIVATE ${PATH_LIBOPENCM3}/include ${PATH_GREATFET_FIRMWARE_COMMON} ${PATH_LIBGREAT}/firmware/include ${PATH_LIBGREAT}/firmware/platform/lpc43xx/linker)
 
 target_compile_options(blinky_dfu.elf PRIVATE -std=gnu99 -Os -g3 -Wall -Wextra -fno-common -MD -fno-builtin-printf -Wno-missing-field-initializers)
 
@@ -100,7 +96,7 @@ add_custom_target(blinky.dfu ${DFU_ALL} DEPENDS blinky_dfu.bin
 	COMMAND rm -f _tmp.dfu _header.bin
 	COMMAND cp blinky_dfu.bin _tmp.dfu
 	COMMAND ${DFU_COMMAND}
-	COMMAND python ${PATH_GREATFET_COMMON}/../dfu.py blinky
+	COMMAND python ${PATH_GREATFET_FIRMWARE_COMMON}/../dfu.py blinky
 	COMMAND cat _header.bin _tmp.dfu >blinky.dfu
 	)
 
