@@ -10,7 +10,7 @@ project(blinky C CXX ASM)
 
 set(SOURCE_M0 ${PATH_GREATFET_FIRMWARE_COMMON}/m0_sleep.c)
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../cmake/m0_bin.s.cmake m0_bin.s)
+configure_file(${PATH_GREATFET_FIRMWARE}/cmake/m0_bin.s.cmake m0_bin.s)
 
 add_executable(blinky_m0.elf ${SOURCE_M0})
 
