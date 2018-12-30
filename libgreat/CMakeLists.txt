@@ -35,14 +35,13 @@ add_library(libgreat STATIC
 # because we don't want a file called liblibgreat.a
 set_target_properties(libgreat PROPERTIES PREFIX "")
 
-target_compile_definitions(libgreat PUBLIC LPC43XX_M4)
+target_compile_definitions(libgreat PUBLIC ${DEFINES_COMMON})
 
 target_include_directories(libgreat SYSTEM PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../firmware/libopencm3/include)
 target_include_directories(libgreat PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/firmware/include ${CMAKE_CURRENT_SOURCE_DIR}/firmware/include/platform/lpc43xx ${CMAKE_CURRENT_SOURCE_DIR}/../firmware/common)
 
-#target_compile_options(libgreat PRIVATE -Os -g3 -Wall -Wextra -fno-common -fno-builtin-printf -Wmissing-field-initializers -nostartfiles -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16)
 target_compile_options(libgreat PRIVATE ${FLAGS_COMPILE_COMMON} ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M4})
 
-target_link_options(libgreat PRIVATE ${FLAGS_LINK_COMMON} ${FLAGS_LINK_M4_COMMON})
+target_link_options(libgreat PRIVATE ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M4} ${FLAGS_LINK_COMMON} ${FLAGS_LINK_M4_COMMON})
 
 target_link_libraries(libgreat c nosys)
