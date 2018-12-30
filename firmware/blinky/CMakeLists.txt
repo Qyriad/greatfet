@@ -49,14 +49,9 @@ add_dependencies(blinky.elf blinky_m0.bin)
 
 target_include_directories(blinky.elf PRIVATE ${PATH_LIBOPENCM3}/include ${PATH_GREATFET_FIRMWARE_COMMON} ${PATH_LIBGREAT}/firmware/include)
 
-target_compile_options(blinky.elf PRIVATE -std=gnu99 -Os -g3 -Wall -Wextra -fno-common -MD -fno-builtin-printf -Wno-missing-field-initializers)
-
-# CPU flags
-target_compile_options(blinky.elf PRIVATE -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16)
-
-target_compile_definitions(blinky.elf PRIVATE GREATFET_ONE LPC43XX LPC4330 LPC43XX_M4)
-
-target_link_options(blinky.elf PRIVATE -nostartfiles -Wl,--gc-sections -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -TLPC4330_M4_memory.ld -Tlibgreat_lpc43xx_rom_to_ram.ld -TLPC43xx_M4_M0_image_from_text.ld)
+target_compile_options(blinky.elf PRIVATE ${FLAGS_COMPILE_COMMON} ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M4})
+target_compile_definitions(blinky.elf PRIVATE ${DEFINES_COMMON} LPC43XX_M4)
+target_link_options(blinky.elf PRIVATE ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M4} ${FLAGS_LINK_COMMON} ${FLAGS_LINK_M4})
 
 target_link_directories(blinky.elf PRIVATE ${PATH_LIBOPENCM3}/lib ${PATH_LIBOPENCM3}/lib/lpc43xx ${PATH_LIBGREAT}/firmware/platform/lpc43xx/linker)
 
