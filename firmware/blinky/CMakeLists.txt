@@ -14,14 +14,9 @@ configure_file(${PATH_GREATFET_FIRMWARE}/cmake/m0_bin.s.cmake m0_bin.s)
 
 add_executable(blinky_m0.elf ${SOURCE_M0})
 
-target_compile_options(blinky_m0.elf PRIVATE -std=gnu99 -Os -g3 -Wall -Wextra -fno-common -MD -fno-builtin-printf -Wno-missing-field-initializers)
-
-# CPU flags
-target_compile_options(blinky_m0.elf PRIVATE -mthumb -mcpu=cortex-m0 -mfloat-abi=soft)
-
-target_compile_definitions(blinky_m0.elf PRIVATE GREATFET_ONE LPC43XX LPC4330 LPC43XX_M0)
-
-target_link_options(blinky_m0.elf PRIVATE -nostartfiles -Wl,--gc-sections -mthumb -mcpu=cortex-m0 -mfloat-abi=soft -TLPC43xx_M0_memory.ld -Tlibopencm3_lpc43xx_m0.ld -Xlinker -Map=m0.map)
+target_compile_options(blinky_m0.elf PRIVATE ${FLAGS_COMPILE_COMMON} ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M0})
+target_compile_definitions(blinky_m0.elf PRIVATE ${DEFINES_COMMON})
+target_link_options(blinky_m0.elf PRIVATE ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M0} ${FLAGS_LINK_COMMON} ${FLAGS_LINK_M0})
 
 target_link_directories(blinky_m0.elf PRIVATE ${PATH_LIBOPENCM3}/lib ${PATH_LIBOPENCM3}/lib/lpc43xx ${PATH_LIBGREAT}/firmware/platform/lpc43xx/linker)
 
