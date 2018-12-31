@@ -45,6 +45,7 @@ set(SOURCE_COMMON_M4
 
 # Common object files that will be linked into both SPI and DFU binaries
 add_library(obj_blinky OBJECT ${CMAKE_CURRENT_SOURCE_DIR}/blinky.c ${SOURCE_COMMON_M4} m0_bin.s)
+
 add_dependencies(obj_blinky blinky_m0.bin) # m0_bin.s `incbin`s blinky_m0.bin
 target_include_directories(obj_blinky PRIVATE ${PATH_LIBOPENCM3}/include ${PATH_GREATFET_FIRMWARE_COMMON} ${PATH_LIBGREAT}/firmware/include)
 target_compile_options(obj_blinky PRIVATE ${FLAGS_COMPILE_COMMON} ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M4})
@@ -56,8 +57,9 @@ target_link_options(blinky.elf PRIVATE ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M4} ${FLA
 target_link_directories(blinky.elf PRIVATE ${PATH_LIBOPENCM3}/lib ${PATH_LIBOPENCM3}/lib/lpc43xx ${PATH_LIBGREAT}/firmware/platform/lpc43xx/linker)
 target_link_libraries(blinky.elf c nosys opencm3_lpc43xx m libgreat)
 
-# ELF -> bin
+# SPI ELF -> bin
 add_custom_target(blinky.bin ALL DEPENDS blinky.elf COMMAND ${CMAKE_OBJCOPY} -Obinary blinky.elf blinky.bin)
+
 
 # DFU version - using a different LD script to run directly from RAM
 add_executable(blinky_dfu.elf $<TARGET_OBJECTS:obj_blinky>)
@@ -65,7 +67,7 @@ target_link_options(blinky_dfu.elf PRIVATE ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M4} $
 target_link_directories(blinky_dfu.elf PRIVATE ${PATH_LIBOPENCM3}/lib ${PATH_LIBOPENCM3}/lib/lpc43xx ${PATH_LIBGREAT}/firmware/platform/lpc43xx/linker)
 target_link_libraries(blinky_dfu.elf c nosys opencm3_lpc43xx m libgreat)
 
-# ELF -> bin
+# DFU ELF -> bin
 add_custom_target(blinky_dfu.bin DEPENDS blinky_dfu.elf COMMAND ${CMAKE_OBJCOPY} -Obinary blinky_dfu.elf blinky_dfu.bin)
 
 # bin -> DFU
@@ -80,5 +82,4 @@ add_custom_target(blinky.dfu ${DFU_ALL} DEPENDS blinky_dfu.bin
 
 # Program/flash targets
 add_custom_target(blinky-flash DEPENDS blinky.bin COMMAND greatfet_firmware -v -Rw blinky.bin)
-
 add_custom_target(blinky-program DEPENDS blinky.dfu COMMAND dfu-util --device 1fc9:000c --alt 0 --download blinky.dfu)
