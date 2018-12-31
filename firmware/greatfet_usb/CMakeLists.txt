@@ -3,74 +3,93 @@
 #
 
 cmake_minimum_required(VERSION 3.1.3)
-set(CMAKE_TOOLCHAIN_FILE ../cmake/toolchain-arm-cortex-m.cmake)
 
-project(greatfet_usb)
+project(greatfet_usb C CXX ASM)
 
-include(../cmake/greatfet-common.cmake)
+# -------M0 Stuff-------
 
-# Automatically include all GreatFET API classes.
-# This enables us to simply add a file to the 'classes' directory to add a new
-# communications API class.
-AUX_SOURCE_DIRECTORY(classes GREATFET_API_CLASSES)
-AUX_SOURCE_DIRECTORY(classes/glitchkit GREATFET_GLITCHKIT_API_CLASSES)
-AUX_SOURCE_DIRECTORY("${LIBGREAT_FIRMWARE_COMMON}/classes" LIBGREAT_API_CLASSES)
+set(SOURCE_M0 ${PATH_GREATFET_FIRMWARE_COMMON}/m0_sleep.c)
 
-set(SRC_M4
-    greatfet_usb.c
-    usb_request_handlers.c
-    usb_bulk_buffer.c
+configure_file(${PATH_GREATFET_FIRMWARE}/cmake/m0_bin.s.cmake m0_bin.s)
 
-    # heap drivers
-    "${PATH_LIBGREAT_FIRMWARE_DRIVERS}/memory/allocator.c"
-    "${PATH_LIBGREAT_FIRMWARE_DRIVERS}/memory/allocator/umm_malloc.c"
+add_executable(greatfet_usb_m0.elf ${SOURCE_M0})
 
-    # optional components that allow malloc/free debugging
-    #"${PATH_LIBGREAT_FIRMWARE_DRIVERS}/memory/allocator/umm_info.c"
-    #"${PATH_LIBGREAT_FIRMWARE_DRIVERS}/memory/allocator/umm_integrity.c"
-    #"${PATH_LIBGREAT_FIRMWARE_DRIVERS}/memory/allocator/umm_poison.c"
+target_compile_options(greatfet_usb_m0.elf PRIVATE ${FLAGS_COMPILE_COMMON} ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M0})
+target_compile_definitions(greatfet_usb_m0.elf PRIVATE ${DEFINES_COMMON})
+target_link_options(greatfet_usb_m0.elf PRIVATE ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M0} ${FLAGS_LINK_COMMON} ${FLAGS_LINK_M0})
 
-    # internal components
-    pin_manager.c
+target_link_directories(greatfet_usb_m0.elf PRIVATE ${PATH_LIBOPENCM3}/lib ${PATH_LIBOPENCM3}/lib/lpc43xx ${PATH_LIBGREAT}/firmware/platform/lpc43xx/linker)
 
-    "${PATH_LIBGREAT_FIRMWARE_DRIVERS}/usb/${LIBGREAT_PLATFORM}/usb.c"
-    "${PATH_LIBGREAT_FIRMWARE_DRIVERS}/usb/${LIBGREAT_PLATFORM}/usb_host.c"
-    "${PATH_LIBGREAT_FIRMWARE_DRIVERS}/usb/${LIBGREAT_PLATFORM}/usb_request.c"
-    "${PATH_LIBGREAT_FIRMWARE_DRIVERS}/usb/${LIBGREAT_PLATFORM}/usb_standard_request.c"
-    "${PATH_LIBGREAT_FIRMWARE_DRIVERS}/usb/${LIBGREAT_PLATFORM}/usb_queue.c"
-    "${PATH_LIBGREAT_FIRMWARE_DRIVERS}/usb/${LIBGREAT_PLATFORM}/usb_queue_host.c"
-    "${PATH_LIBGREAT_FIRMWARE_DRIVERS}/usb/comms_backend.c"
-    "${PATH_LIBGREAT_FIRMWARE_DRIVERS}/gpio/${LIBGREAT_PLATFORM}/gpio.c"
-    "${PATH_LIBGREAT_FIRMWARE_DRIVERS}/comms/comms_class.c"
-    "${PATH_LIBGREAT_FIRMWARE_DRIVERS}/comms/utils.c"
-    "${PATH_GREATFET_FIRMWARE_COMMON}/gpdma.c"
-    "${PATH_GREATFET_FIRMWARE_COMMON}/gpio_dma.c"
-    "${PATH_GREATFET_FIRMWARE_COMMON}/gpio_scu.c"
-    usb_descriptor.c
-    usb_device.c
-    usb_endpoint.c
-    sgpio_isr.c
-    "${PATH_GREATFET_FIRMWARE_COMMON}/glitchkit.c"
-    "${PATH_GREATFET_FIRMWARE_COMMON}/fault_handler.c"
-    "${PATH_GREATFET_FIRMWARE_COMMON}/rom_iap.c"
-    "${PATH_GREATFET_FIRMWARE_COMMON}/spi_bus.c"
-    "${PATH_GREATFET_FIRMWARE_COMMON}/debug.c"
-    "${PATH_GREATFET_FIRMWARE_COMMON}/sgpio.c"
-    "${PATH_GREATFET_FIRMWARE_COMMON}/one_wire.c"
+target_link_libraries(greatfet_usb_m0.elf PRIVATE c nosys opencm3_lpc43xx_m0)
 
-    ${LIBGREAT_API_CLASSES}
-    ${GREATFET_API_CLASSES}
-    ${GREATFET_GLITCHKIT_API_CLASSES}
+# ELF -> bin
+add_custom_target(greatfet_usb_m0.bin ALL DEPENDS greatfet_usb_m0.elf COMMAND ${CMAKE_OBJCOPY} -Obinary greatfet_usb_m0.elf greatfet_usb_m0.bin)
 
-    # TODO: get rid of these!
-    legacy_apis/usb_api_spi.c
-    legacy_apis/usb_api_adc.c
-    legacy_apis/usb_api_logic_analyzer.c
-    legacy_apis/usb_api_sdir.c
-    legacy_apis/usb_api_usbhost.c
-    legacy_apis/usb_api_glitchkit_simple.c
-    legacy_apis/usb_api_DS18B20.c
-    legacy_apis/usb_api_msp430.c
-)
 
-DeclareTargets()
+# -------M4 Stuff-------
+
+# firmware/common sources files used by greatfet_usb
+set(SOURCE_COMMON_M4
+	${PATH_GREATFET_FIRMWARE_COMMON}/gpdma.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/gpio_dma.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/gpio_scu.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/glitchkit.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/fault_handler.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/rom_iap.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/spi_bus.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/debug.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/sgpio.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/one_wire.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/greatfet_core.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/spiflash_target.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/spiflash.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/spi_ssp.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/i2c_bus.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/i2c_lpc.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/gpio_lpc.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/gpio_int.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/printf.c
+	${PATH_GREATFET_FIRMWARE_COMMON}/time.c
+	)
+
+# AUX SOURCE DIRECTORY CLASSES
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/classes CLASSES_SOURCES)
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/glitchkit CLASSES_GLITCHKIT_SOURCES)
+aux_source_directory(${PATH_GREATFET_FIRMWARE_COMMON}/classes CLASSES_LIBGREAT_COMMON_SOURCES)
+
+# Common object files that will be linked into both SPI and DFU binaries
+add_library(obj_greatfet_usb OBJECT
+	${CMAKE_CURRENT_SOURCE_DIR}/greatfet_usb.c
+	${CMAKE_CURRENT_SOURCE_DIR}/usb_request_handlers.c
+	${CMAKE_CURRENT_SOURCE_DIR}/usb_bulk_buffer.c
+	${CMAKE_CURRENT_SOURCE_DIR}/pin_manager.c
+	${CMAKE_CURRENT_SOURCE_DIR}/usb_descriptor.c
+	${CMAKE_CURRENT_SOURCE_DIR}/usb_device.c
+	${CMAKE_CURRENT_SOURCE_DIR}/usb_endpoint.c
+	${CMAKE_CURRENT_SOURCE_DIR}/sgpio_isr.c
+	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_spi.c
+	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_adc.c
+	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_i2c.c
+	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_leds.c
+	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_logic_analyzer.c
+	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_sdir.c
+	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_usbhost.c
+	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_glitchkit_simple.c
+	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_DS18B20.c
+	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_msp430.c
+	${CLASSES_SOURCES}
+	${CLASSES_GLITCHKIT_SOURCES}
+	${CLASSES_LIBGREAT_COMMON_SOURCES}
+	${SOURCE_COMMON_M4}
+	)
+
+add_dependencies(obj_greatfet_usb greatfet_usb_m0.bin) # m0_bin.s `incbin`s greatfet_usb_m0.bin
+target_include_directories(obj_greatfet_usb PRIVATE ${PATH_LIBOPENCM3}/include ${PATH_GREATFET_FIRMWARE_COMMON} ${PATH_LIBGREAT}/firmware/include ${PATH_LIBGREAT}/firmware/include/platform/${LIBGREAT_PLATFORM})
+target_compile_options(obj_greatfet_usb PRIVATE ${FLAGS_COMPILE_COMMON} ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M4})
+target_compile_definitions(obj_greatfet_usb PRIVATE ${DEFINES_COMMON} LPC43XX_M4)
+
+# SPI flash version
+add_executable(greatfet_usb.elf $<TARGET_OBJECTS:obj_greatfet_usb>)
+target_link_options(greatfet_usb.elf PRIVATE ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M4} ${FLAGS_LINK_COMMON} ${FLAGS_LINK_M4_COMMON} ${FLAGS_LINK_M4_SPI})
+target_link_directories(greatfet_usb.elf PRIVATE ${PATH_LIBOPENCM3}/lib ${PATH_LIBOPENCM3}/lib/lpc43xx ${PATH_LIBGREAT}/firmware/platform/${LIBGREAT_PLATFORM}/linker)
+target_link_libraries(greatfet_usb.elf c nosys opencm3_lpc43xx m libgreat)
