@@ -75,7 +75,7 @@ add_custom_target(blinky.dfu ${DFU_ALL} DEPENDS blinky_dfu.bin
 	COMMAND rm -f _tmp.dfu _header.bin
 	COMMAND cp blinky_dfu.bin _tmp.dfu
 	COMMAND ${DFU_COMMAND}
-	COMMAND python ${PATH_GREATFET_FIRMWARE_COMMON}/../dfu.py blinky
+	COMMAND python ${PATH_GREATFET_FIRMWARE}/dfu.py blinky
 	COMMAND cat _header.bin _tmp.dfu >blinky.dfu
 	)
 
