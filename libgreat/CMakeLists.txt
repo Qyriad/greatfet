@@ -44,4 +44,4 @@ target_compile_options(libgreat PRIVATE ${FLAGS_COMPILE_COMMON} ${FLAGS_CPU_COMM
 
 target_link_options(libgreat PRIVATE ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M4} ${FLAGS_LINK_COMMON} ${FLAGS_LINK_M4_COMMON})
 
-target_link_libraries(libgreat c nosys)
+target_link_libraries(libgreat c nosys opencm3_lpc43xx)
