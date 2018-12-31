@@ -47,14 +47,14 @@ set(SOURCE_COMMON_M4
 add_library(obj_blinky OBJECT ${CMAKE_CURRENT_SOURCE_DIR}/blinky.c ${SOURCE_COMMON_M4} m0_bin.s)
 
 add_dependencies(obj_blinky blinky_m0.bin) # m0_bin.s `incbin`s blinky_m0.bin
-target_include_directories(obj_blinky PRIVATE ${PATH_LIBOPENCM3}/include ${PATH_GREATFET_FIRMWARE_COMMON} ${PATH_LIBGREAT}/firmware/include)
+target_include_directories(obj_blinky PRIVATE ${PATH_LIBOPENCM3}/include ${PATH_GREATFET_FIRMWARE_COMMON} ${PATH_LIBGREAT}/firmware/include ${PATH_LIBGREAT}/firmware/include/platform/${LIBGREAT_PLATFORM})
 target_compile_options(obj_blinky PRIVATE ${FLAGS_COMPILE_COMMON} ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M4})
 target_compile_definitions(obj_blinky PRIVATE ${DEFINES_COMMON} LPC43XX_M4)
 
 # SPI flash version
 add_executable(blinky.elf $<TARGET_OBJECTS:obj_blinky>)
 target_link_options(blinky.elf PRIVATE ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M4} ${FLAGS_LINK_COMMON} ${FLAGS_LINK_M4_COMMON} ${FLAGS_LINK_M4_SPI})
-target_link_directories(blinky.elf PRIVATE ${PATH_LIBOPENCM3}/lib ${PATH_LIBOPENCM3}/lib/lpc43xx ${PATH_LIBGREAT}/firmware/platform/lpc43xx/linker)
+target_link_directories(blinky.elf PRIVATE ${PATH_LIBOPENCM3}/lib ${PATH_LIBOPENCM3}/lib/lpc43xx ${PATH_LIBGREAT}/firmware/platform/${LIBGREAT_PLATFORM}/linker)
 target_link_libraries(blinky.elf c nosys opencm3_lpc43xx m libgreat)
 
 # SPI ELF -> bin
