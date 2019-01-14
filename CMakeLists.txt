@@ -63,7 +63,7 @@ set(FLAGS_LINK_COMMON -nostartfiles -Wl,--gc-sections)
 set(FLAGS_LINK_M0 -TLPC43xx_M0_memory.ld -Tlibopencm3_lpc43xx_m0.ld -Xlinker -Map=m0.map)
 # LPC43xx_M4_M0_image_from_text.ld is common to both, but it needs to be after libgreat_lpc43xx.ld
 set(FLAGS_LINK_M4_COMMON -TLPC4330_M4_memory.ld)
-set(FLAGS_LINK_M4_SPI	 -TLPC43xx_M4_M0_image_from_text.ld -Tlibgreat_lpc43xx_rom_to_ram.ld -Xlinker -Map=m4.map)
+set(FLAGS_LINK_M4_SPI	 -Tlibgreat_lpc43xx_rom_to_ram.ld -TLPC43xx_M4_M0_image_from_text.ld -Xlinker -Map=m4.map)
 set(FLAGS_LINK_M4_DFU	 -Tlibgreat_lpc43xx.ld -TLPC43xx_M4_M0_image_from_text.ld -Xlinker -Map=m4.map)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libgreat)

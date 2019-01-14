@@ -100,8 +100,8 @@ add_custom_target(greatfet_usb.bin ALL DEPENDS greatfet_usb.elf COMMAND ${CMAKE_
 
 # DFU version - using a different LD script to run directly from RAM
 add_executable(greatfet_usb_dfu.elf $<TARGET_OBJECTS:obj_greatfet_usb>)
-target_link_options(greatfet_usb_dfu.elf PRIVATE ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M4} ${FLAGS_LINK_COMMON} ${FLAGS_LINK_M4_COMMON} ${FLAGS_LINK_M4_DFU})
-#target_link_options(greatfet_usb_dfu.elf PRIVATE ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M4} -nostartfiles -Wl,--gc-sections -TLPC4330_M4_memory.ld -Tlibgreat_lpc43xx.ld -TLPC43xx_M4_M0_image_from_text.ld)
+#target_link_options(greatfet_usb_dfu.elf PRIVATE ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M4} ${FLAGS_LINK_COMMON} ${FLAGS_LINK_M4_COMMON} ${FLAGS_LINK_M4_DFU})
+target_link_options(greatfet_usb_dfu.elf PRIVATE ${FLAGS_LINK_COMMON} ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M4} ${FLAGS_LINK_M4_COMMON} ${FLAGS_LINK_M4_DFU})
 target_link_directories(greatfet_usb_dfu.elf PRIVATE ${PATH_LIBOPENCM3}/lib ${PATH_LIBOPENCM3}/lib/lpc43xx ${PATH_LIBGREAT}/firmware/platform/${LIBGREAT_PLATFORM}/linker)
 target_link_libraries(greatfet_usb_dfu.elf c nosys opencm3_lpc43xx m libgreat)
 
