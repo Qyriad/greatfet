@@ -53,9 +53,10 @@ set(SOURCE_COMMON_M4
 	)
 
 # AUX SOURCE DIRECTORY CLASSES
+message(STATUS "Reading classes from ${CMAKE_CURRENT_SOURCE_DIR}/classes")
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/classes CLASSES_SOURCES)
+message(STATUS "Using classes: ${CLASSES_SOURCES}")
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/glitchkit CLASSES_GLITCHKIT_SOURCES)
-aux_source_directory(${PATH_GREATFET_FIRMWARE_COMMON}/classes CLASSES_LIBGREAT_COMMON_SOURCES)
 
 # Common object files that will be linked into both SPI and DFU binaries
 add_library(obj_greatfet_usb OBJECT
@@ -76,10 +77,8 @@ add_library(obj_greatfet_usb OBJECT
 	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_usbhost.c
 	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_glitchkit_simple.c
 	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_DS18B20.c
-	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_msp430.c
 	${CLASSES_SOURCES}
 	${CLASSES_GLITCHKIT_SOURCES}
-	${CLASSES_LIBGREAT_COMMON_SOURCES}
 	${SOURCE_COMMON_M4}
 	)
 
