@@ -70,7 +70,6 @@ add_library(obj_greatfet_usb OBJECT
 	${CMAKE_CURRENT_SOURCE_DIR}/sgpio_isr.c
 	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_spi.c
 	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_adc.c
-	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_i2c.c
 	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_leds.c
 	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_logic_analyzer.c
 	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_sdir.c
@@ -105,7 +104,7 @@ target_link_directories(greatfet_usb_dfu.elf PRIVATE ${PATH_LIBOPENCM3}/lib ${PA
 target_link_libraries(greatfet_usb_dfu.elf c nosys opencm3_lpc43xx m)
 
 # DFU ELF -> bin
-add_custom_target(greatfet_usb_dfu.bin DEPENDS greatfet_usb_dfu.elf COMMAND ${CMAKE_OBJCOPY} -Obinary greatfet_usb_dfu.elf greatfet_usb_dfu.bin)
+add_custom_target(greatfet_usb_dfu.bin ALL DEPENDS greatfet_usb_dfu.elf COMMAND ${CMAKE_OBJCOPY} -Obinary greatfet_usb_dfu.elf greatfet_usb_dfu.bin)
 
 # bin -> DFU
 

@@ -1,3 +1,7 @@
+#
+# This file is part of GreatFET
+# Top-level CMake
+
 cmake_minimum_required(VERSION 3.1.3)
 
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/firmware/cmake/toolchain-arm-cortex-m.cmake)
