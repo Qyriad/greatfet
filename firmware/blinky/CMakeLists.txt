@@ -55,11 +55,10 @@ target_compile_definitions(obj_blinky PRIVATE ${DEFINES_COMMON} LPC43XX_M4)
 add_executable(blinky.elf $<TARGET_OBJECTS:obj_blinky>)
 target_link_options(blinky.elf PRIVATE ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M4} ${FLAGS_LINK_COMMON} ${FLAGS_LINK_M4_COMMON} ${FLAGS_LINK_M4_SPI})
 target_link_directories(blinky.elf PRIVATE ${PATH_LIBOPENCM3}/lib ${PATH_LIBOPENCM3}/lib/lpc43xx ${PATH_LIBGREAT}/firmware/platform/${LIBGREAT_PLATFORM}/linker)
-target_link_libraries(blinky.elf c nosys opencm3_lpc43xx m libgreat)
+target_link_libraries(blinky.elf c nosys opencm3_lpc43xx m)
 
 # SPI ELF -> bin
 add_custom_target(blinky.bin ALL DEPENDS blinky.elf COMMAND ${CMAKE_OBJCOPY} -Obinary blinky.elf blinky.bin)
-
 
 # DFU version - using a different LD script to run directly from RAM
 add_executable(blinky_dfu.elf $<TARGET_OBJECTS:obj_blinky>)

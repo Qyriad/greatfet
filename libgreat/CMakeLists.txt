@@ -12,7 +12,12 @@ set(LD_SCRIPT "-T${CMAKE_CURRENT_SOURCE_DIR}/../firmware/common/LPC43xx_M4_memor
 
 set(LD_SCRIPT_DFU "-T${CMAKE_CURRENT_SOURCE_DIR}/../firmware/common/LPC4330_M4.memory.ld -Tlibopencm3_lpc43xx.ld -T${CMAKE_CURRENT_SOURCE_DIR}/../firmware/common/LPC43xx_M4_M0_image_from_text.ld")
 
-add_library(libgreat STATIC
+message(STATUS "Finding classses in ${PATH_LIBGREAT}/classes")
+aux_source_directory(${PATH_LIBGREAT}/classes CLASSES_LIBGREAT_COMMON_SOURCES)
+
+message(STATUS "Using classes: " ${CLASSES_LIBGREAT_COMMON_SOURCES})
+
+add_library(libgreat OBJECT
 	${CMAKE_CURRENT_SOURCE_DIR}/firmware/platform/lpc43xx/crt0.c
 	${CMAKE_CURRENT_SOURCE_DIR}/firmware/platform/lpc43xx/sync.c
 	${CMAKE_CURRENT_SOURCE_DIR}/firmware/platform/lpc43xx/sync.S
@@ -30,10 +35,8 @@ add_library(libgreat STATIC
 	${CMAKE_CURRENT_SOURCE_DIR}/firmware/drivers/comms/utils.c
 	${CMAKE_CURRENT_SOURCE_DIR}/firmware/classes/core.c
 	${CMAKE_CURRENT_SOURCE_DIR}/firmware/classes/firmware.c
+	${CLASSES_LIBGREAT_COMMON_SOURCES}
 	)
-
-# because we don't want a file called liblibgreat.a
-set_target_properties(libgreat PROPERTIES PREFIX "")
 
 target_compile_definitions(libgreat PUBLIC ${DEFINES_COMMON})
 
@@ -41,7 +44,3 @@ target_include_directories(libgreat SYSTEM PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/.
 target_include_directories(libgreat PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/firmware/include ${CMAKE_CURRENT_SOURCE_DIR}/firmware/include/platform/lpc43xx ${CMAKE_CURRENT_SOURCE_DIR}/../firmware/common)
 
 target_compile_options(libgreat PRIVATE ${FLAGS_COMPILE_COMMON} ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M4})
-
-target_link_options(libgreat PRIVATE ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M4} ${FLAGS_LINK_COMMON} ${FLAGS_LINK_M4_COMMON})
-
-target_link_libraries(libgreat c nosys opencm3_lpc43xx)

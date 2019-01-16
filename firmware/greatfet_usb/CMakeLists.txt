@@ -88,21 +88,21 @@ target_compile_options(obj_greatfet_usb PRIVATE ${FLAGS_COMPILE_COMMON} ${FLAGS_
 target_compile_definitions(obj_greatfet_usb PRIVATE ${DEFINES_COMMON} LPC43XX_M4)
 
 # SPI flash version
-add_executable(greatfet_usb.elf $<TARGET_OBJECTS:obj_greatfet_usb>)
+add_executable(greatfet_usb.elf $<TARGET_OBJECTS:obj_greatfet_usb> $<TARGET_OBJECTS:libgreat>)
 target_link_options(greatfet_usb.elf PRIVATE ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M4} ${FLAGS_LINK_COMMON} ${FLAGS_LINK_M4_COMMON} ${FLAGS_LINK_M4_SPI})
 target_link_directories(greatfet_usb.elf PRIVATE ${PATH_LIBOPENCM3}/lib ${PATH_LIBOPENCM3}/lib/lpc43xx ${PATH_LIBGREAT}/firmware/platform/${LIBGREAT_PLATFORM}/linker)
-target_link_libraries(greatfet_usb.elf c nosys opencm3_lpc43xx m libgreat)
+target_link_libraries(greatfet_usb.elf c nosys opencm3_lpc43xx m)
 
 # SPI ELF -> bin
 add_custom_target(greatfet_usb.bin ALL DEPENDS greatfet_usb.elf COMMAND ${CMAKE_OBJCOPY} -Obinary greatfet_usb.elf greatfet_usb.bin)
 
 
 # DFU version - using a different LD script to run directly from RAM
-add_executable(greatfet_usb_dfu.elf $<TARGET_OBJECTS:obj_greatfet_usb>)
+add_executable(greatfet_usb_dfu.elf $<TARGET_OBJECTS:obj_greatfet_usb> $<TARGET_OBJECTS:libgreat>)
 #target_link_options(greatfet_usb_dfu.elf PRIVATE ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M4} ${FLAGS_LINK_COMMON} ${FLAGS_LINK_M4_COMMON} ${FLAGS_LINK_M4_DFU})
 target_link_options(greatfet_usb_dfu.elf PRIVATE ${FLAGS_LINK_COMMON} ${FLAGS_CPU_COMMON} ${FLAGS_CPU_M4} ${FLAGS_LINK_M4_COMMON} ${FLAGS_LINK_M4_DFU})
 target_link_directories(greatfet_usb_dfu.elf PRIVATE ${PATH_LIBOPENCM3}/lib ${PATH_LIBOPENCM3}/lib/lpc43xx ${PATH_LIBGREAT}/firmware/platform/${LIBGREAT_PLATFORM}/linker)
-target_link_libraries(greatfet_usb_dfu.elf c nosys opencm3_lpc43xx m libgreat)
+target_link_libraries(greatfet_usb_dfu.elf c nosys opencm3_lpc43xx m)
 
 # DFU ELF -> bin
 add_custom_target(greatfet_usb_dfu.bin DEPENDS greatfet_usb_dfu.elf COMMAND ${CMAKE_OBJCOPY} -Obinary greatfet_usb_dfu.elf greatfet_usb_dfu.bin)
