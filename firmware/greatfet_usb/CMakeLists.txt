@@ -70,7 +70,6 @@ add_library(obj_greatfet_usb OBJECT
 	${CMAKE_CURRENT_SOURCE_DIR}/sgpio_isr.c
 	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_spi.c
 	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_adc.c
-	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_leds.c
 	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_logic_analyzer.c
 	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_sdir.c
 	${CMAKE_CURRENT_SOURCE_DIR}/legacy_apis/usb_api_usbhost.c
