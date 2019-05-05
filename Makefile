@@ -47,8 +47,8 @@ install_and_flash: full_install
 # Process for installing the host tools.
 #
 define install_host
-	pushd libgreat/host; $(PYTHON) setup.py install; popd
-	pushd host; $(PYTHON) setup.py install; popd
+	pushd libgreat/host; $(PYTHON) setup.py $(SETUPFLAGS) install; popd
+	pushd host; $(PYTHON) setup.py $(SETUPFLAGS) install; popd
 endef
 
 #
