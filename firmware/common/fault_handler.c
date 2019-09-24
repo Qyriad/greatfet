@@ -234,6 +234,9 @@ void usage_fault_handler_c(hard_fault_stack_t *state)
 	if (scb->usage_faults.invalid_pc) {
 		pr_emergency("    reason: PC invalid after exception / interrupt return\n");
 	}
+	if (scb->usage_faults.undefined_instruction) {
+		pr_emergency("    reason: undefined instruction\n");
+	}
 
 	pr_emergency("    UFSR: %04" PRIu16 "\n", scb->ufsr);
 	pr_emergency("    CPACR: %08" PRIu32 "\n", scb->cpacr_raw);
