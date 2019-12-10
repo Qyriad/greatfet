@@ -8,9 +8,6 @@
 #include <scheduler.h>
 #include <toolchain.h>
 
-#include <libopencm3/cm3/vector.h>
-#include <libopencm3/lpc43xx/m4/nvic.h>
-
 #include <greatfet_core.h>
 
 #include "drivers/usb/usb.h"

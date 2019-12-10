@@ -7,8 +7,6 @@
 #include <toolchain.h>
 #include <debug.h>
 
-#include <libopencm3/cm3/vector.h>
-#include <libopencm3/lpc43xx/m4/nvic.h>
 #include <drivers/usb/usb.h>
 #include <greatfet_core.h>
 
