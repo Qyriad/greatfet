@@ -17,6 +17,7 @@ from .interfaces.adc import ADC
 
 from .interfaces.pattern_generator import PatternGenerator
 from .interfaces.sdir import SDIRTransceiver
+from .interfaces.cc_debug import CC_DEBUG
 
 from . import programmers as ProgrammerModules
 
@@ -73,7 +74,8 @@ class GreatFETBoard(GreatBoard):
         'pattern_generator': ('pattern_generator', PatternGenerator),
         'sdir': ('sdir', SDIRTransceiver),
         'gpio': ('gpio', GPIO),
-        'glitchkit': ('glitchkit', GlitchKitCollection)
+        'glitchkit': ('glitchkit', GlitchKitCollection),
+        'swra124': ('cc_debug', CC_DEBUG)
     }
 
 
