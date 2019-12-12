@@ -16,4 +16,9 @@ class CC_DEBUG(GreatFETInterface):
     def initialize(self):
         self.api.setup()
         self.api.debug_init()
-        return(self.api.get_chip_id(), self.api.read_status())
+        
+    def get_chip_id(self):
+        return(self.api.get_chip_id())
+
+    def read_status(self):
+        return(self.api.read_status())
