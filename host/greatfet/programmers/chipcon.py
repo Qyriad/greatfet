@@ -45,7 +45,7 @@ class ChipconProgrammer(GreatFETProgrammer):
         """
 
         if not isinstance(instruction[0], bytes):
-            instruction = bytes(*instruction)
+            instruction = bytes(instruction)
         else:
             instruction = instruction[0]
 
@@ -59,6 +59,7 @@ class ChipconProgrammer(GreatFETProgrammer):
 
         output = bytearray()
 
+        # Each bank is a 15-bit address space.
         bank = linear_address >> 15
         page_address = linear_address & 0x7FFF
 
