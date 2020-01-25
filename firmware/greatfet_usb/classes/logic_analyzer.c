@@ -85,6 +85,8 @@ static int verb_configure(struct command_transaction *trans)
 	uint32_t desired_sample_rate = comms_argument_parse_uint32_t(trans);
 	uint8_t  desired_bus_width   = comms_argument_parse_uint8_t(trans);
 
+	pr_info("Configuring logic analyzer for (%d, %d)\n", desired_sample_rate, desired_bus_width);
+
 	if (!comms_transaction_okay(trans)) {
 		return EINVAL;
 	}
@@ -110,6 +112,8 @@ static int verb_start(struct command_transaction *trans)
 {
 	(void)trans;
 
+	pr_info("Starting logic analysis...\n");
+
 	// Set up our USB buffer for acquisition...
 	logic_analyzer_functions[0].position_in_buffer = 0;
 	logic_analyzer_functions[0].data_in_buffer     = 0;
@@ -127,6 +131,8 @@ static int verb_start(struct command_transaction *trans)
 static int verb_stop(struct command_transaction *trans)
 {
 	(void)trans;
+
+	pr_warning("Stopping logic analysis...\n");
 
 	// Disable our stream-to-host, and disable the SGPIO capture.
 	usb_streaming_stop_streaming_to_host();
