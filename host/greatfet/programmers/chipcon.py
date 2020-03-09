@@ -1,6 +1,10 @@
 #
 # This file is part of GreatFET
 #
+"""
+Chipcon programmer for devices supporting the CC1110/CC2430/CC2510
+Debug and Programming Interface Specification as defined in SWRA124.
+"""
 
 import time
 
@@ -8,14 +12,17 @@ from enum import IntFlag
 
 from ..programmer import GreatFETProgrammer
 
+
 FLASH_PAGE_SIZE      = 1024 # 1KB
 FLASH_WORD_SIZE      = 2    # 2 bytes
 WORDS_PER_FLASH_PAGE = FLASH_PAGE_SIZE // FLASH_WORD_SIZE
+
 
 def create_programmer(board, *args, **kwargs):
     """ Creates a representative programmer for this module. """
 
     return ChipconProgrammer(board, *args, **kwargs)
+
 
 
 class ChipconProgrammer(GreatFETProgrammer):
@@ -54,18 +61,25 @@ class ChipconProgrammer(GreatFETProgrammer):
 
 
     def debug_init(self):
+        """ Begin debugging. Should be called before any debug commands. """
+
         self.api.debug_init()
 
 
     def get_chip_id(self):
+        """ Returns 16-bit chip ID and version number. """
+
         return(self.api.get_chip_id())
 
 
     def read_status(self):
+        """ Reads status byte, returns a DebugStatus enum. """
         return(DebugStatus(self.api.read_status()))
 
 
     def resume(self):
+        """ Resume CPU operation from a halted state. """
+
         self.api.resume()
 
 
@@ -97,17 +111,7 @@ class ChipconProgrammer(GreatFETProgrammer):
 
         output = bytearray()
 
-        # Each bank is a 15-bit address space.
-        # The bank index itself is 8 bits.
-        bank = linear_address >> 15
-
-        if bank > 0xFF:
-            raise ValueError("Linear address is too big: (bank * 16) must fit in a byte")
-
-        page_address = linear_address & 0x7FFF
-
-        page_address_high = page_address >> 8
-        page_address_low  = page_address & 0xFF
+        bank, page_address_high, page_address_low = self._split_linear_address(linear_address)
 
         self.run_instruction(0x75, 0xc7, (bank * 16) + 1)               # MOV MEMCTR, (bank * 16) + 1
         self.run_instruction(0x90, page_address_high, page_address_low) # MOV DPTR, address
@@ -177,7 +181,7 @@ class ChipconProgrammer(GreatFETProgrammer):
         address_high = linear_address >> 8
         address_low  = linear_address & 0xFF
 
-        self.run_instruction(0x02, address_high, address_low) # LJMP 
+        self.run_instruction(0x02, address_high, address_low) # LJMP
 
 
     def clock_init(self):
@@ -272,7 +276,7 @@ class ChipconProgrammer(GreatFETProgrammer):
         return self.read_code_memory(linear_address & 0xFFFF, FLASH_PAGE_SIZE)
 
 
-    def read_flash(self, *, length=0, start_address=0):
+    def read_flash(self, *, start_address=0, length=0):
         """ Read a chunk of flash memory.
 
         Parameters:
@@ -298,7 +302,7 @@ class ChipconProgrammer(GreatFETProgrammer):
                 break
 
 
-    def program_flash(self, image_array, erase=True, verify=True, start=0):
+    def program_flash(self, image_array, *, erase=True, verify=True, start=0):
         """ Program the entire flash memory.
 
         Parameters:
@@ -307,6 +311,7 @@ class ChipconProgrammer(GreatFETProgrammer):
             verify - Used to specify whether or not the data was flashed correctly.
             start -- The address to begin writing data to the flash.
         """
+
         if erase:
             self.mass_erase_flash()
 
@@ -331,8 +336,7 @@ class ChipconProgrammer(GreatFETProgrammer):
 
 
 class DebugStatus(IntFlag):
-    """ Enumeration for the values returned from the chip status.
-    """
+    """ Enumeration for the values returned from the chip status. """
 
     CHIP_ERASE_DONE     = 0x80
     PCON_IDLE           = 0x40
