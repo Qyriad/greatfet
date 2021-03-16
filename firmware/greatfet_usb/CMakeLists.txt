@@ -32,7 +32,7 @@ add_greatfet_targets(${PROJECT_NAME}
 	${CLASSES_SOURCES}
 )
 use_libgreat_modules(${PROJECT_NAME} allocator comms scheduler usb usb_comms gpio ad970x
-	debug-backtrace sgpio uart ringbuffer dac)
+	debug-backtrace sgpio uart ringbuffer dac ssp)
 
 
 
